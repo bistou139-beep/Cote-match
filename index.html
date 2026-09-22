@@ -1,58 +1,388 @@
-
 <!DOCTYPE html>
 <html lang="fr">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Cote & Match</title>
+
 <style>
-body{margin:0;font-family:Arial,sans-serif;background:#f3f5f7;color:#17202a}
-header{background:#111827;color:white;padding:22px;text-align:center}
-h1{margin:0;font-size:28px}
-main{padding:18px;max-width:700px;margin:auto}
-.card{background:white;border-radius:16px;padding:18px;margin-bottom:15px;box-shadow:0 3px 12px #0001}
-h2{margin-top:0}
-.match{font-size:20px;font-weight:bold;margin:12px 0}
-.odds{display:flex;gap:8px}
-.odd{flex:1;background:#eef2ff;padding:14px;text-align:center;border-radius:10px;font-weight:bold}
-.btn{display:block;background:#16a34a;color:white;text-align:center;padding:15px;border-radius:12px;text-decoration:none;font-weight:bold;margin-top:12px}
-.small{color:#667085;font-size:14px}
+*{box-sizing:border-box}
+body{
+  margin:0;
+  font-family:Arial,sans-serif;
+  background:#f1f4f8;
+  color:#172033;
+}
+header{
+  background:#111827;
+  color:white;
+  padding:22px 18px;
+  text-align:center;
+}
+header h1{margin:0;font-size:30px}
+header p{margin:7px 0 0;color:#cbd5e1}
+
+main{
+  max-width:760px;
+  margin:auto;
+  padding:16px;
+}
+
+.card{
+  background:white;
+  border-radius:20px;
+  padding:22px;
+  margin-bottom:16px;
+  box-shadow:0 5px 20px #0000000d;
+}
+
+h2{margin:0 0 15px;font-size:25px}
+h3{margin:0 0 10px}
+
+select{
+  width:100%;
+  padding:15px;
+  border:1px solid #d6dce5;
+  border-radius:12px;
+  font-size:16px;
+  background:white;
+}
+
+.match{
+  font-size:21px;
+  font-weight:bold;
+  text-align:center;
+  margin:15px 0;
+}
+
+.date{
+  text-align:center;
+  color:#64748b;
+  margin-bottom:12px;
+}
+
+.odds{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:10px;
+}
+
+.odd{
+  background:#eef2ff;
+  border-radius:15px;
+  padding:15px 5px;
+  text-align:center;
+}
+
+.odd strong{
+  display:block;
+  font-size:14px;
+  color:#64748b;
+}
+
+.odd span{
+  display:block;
+  font-size:25px;
+  font-weight:bold;
+  margin-top:7px;
+}
+
+.bookmakers{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:10px;
+  margin-top:15px;
+}
+
+.book{
+  border:1px solid #e2e8f0;
+  border-radius:14px;
+  padding:14px;
+  text-align:center;
+}
+
+.book b{display:block;margin-bottom:8px}
+
+.analysis{
+  background:#f8fafc;
+  border-radius:15px;
+  padding:15px;
+  line-height:1.5;
+}
+
+.percent{
+  margin:14px 0;
+}
+
+.percent-top{
+  display:flex;
+  justify-content:space-between;
+  margin-bottom:6px;
+  font-weight:bold;
+}
+
+.bar{
+  height:12px;
+  background:#e5e7eb;
+  border-radius:20px;
+  overflow:hidden;
+}
+
+.fill{
+  height:100%;
+  background:#2563eb;
+}
+
+.graph{
+  height:180px;
+  background:#f8fafc;
+  border-radius:15px;
+  padding:15px;
+  position:relative;
+}
+
+svg{width:100%;height:100%}
+
+.status{
+  background:#fff7ed;
+  color:#9a3412;
+  padding:13px;
+  border-radius:12px;
+  font-size:14px;
+  margin-top:15px;
+}
+
+footer{
+  text-align:center;
+  color:#64748b;
+  padding:20px;
+  font-size:13px;
+}
+
+@media(max-width:500px){
+  .bookmakers{grid-template-columns:1fr}
+  header h1{font-size:27px}
+  .card{padding:18px}
+}
 </style>
 </head>
+
 <body>
+
 <header>
-<h1>⚽ Cote & Match</h1>
-<p>Analyse football & évolution des cotes</p>
+  <h1>⚽ Cote & Match</h1>
+  <p>Analyse football & évolution des cotes</p>
 </header>
 
 <main>
-<div class="card">
-<h2>🔎 Match du jour</h2>
-<div class="match">Sélectionnez un match</div>
-<p class="small">Analyse de la forme, absences et statistiques.</p>
-</div>
 
 <div class="card">
-<h2>📊 Cotes</h2>
-<div class="odds">
-<div class="odd">1<br>—</div>
-<div class="odd">N<br>—</div>
-<div class="odd">2<br>—</div>
-</div>
-<p class="small">Bwin / Betclic : données affichées lorsqu'elles sont disponibles et autorisées.</p>
+  <h2>🔎 Match du jour</h2>
+
+  <select id="matchSelect" onchange="changeMatch()">
+    <option value="0">Paris FC - Marseille</option>
+    <option value="1">Lyon - Monaco</option>
+    <option value="2">Lille - Rennes</option>
+  </select>
+
+  <div class="match" id="matchName">
+    Paris FC - Marseille
+  </div>
+
+  <div class="date" id="matchDate">
+    Match sélectionné
+  </div>
 </div>
 
-<div class="card">
-<h2>📈 Évolution de cote</h2>
-<p>Suivi de l'évolution jusqu'au coup d'envoi.</p>
-<div class="odd">Données en attente</div>
-</div>
 
 <div class="card">
-<h2>🧠 Analyse</h2>
-<p>Forme • Absences • Joueurs • Statistiques • Historique</p>
-<a class="btn" href="#">Analyser un match</a>
+  <h2>📊 Cotes</h2>
+
+  <div class="odds">
+    <div class="odd">
+      <strong>1</strong>
+      <span id="odd1">3.40</span>
+    </div>
+
+    <div class="odd">
+      <strong>N</strong>
+      <span id="oddN">3.25</span>
+    </div>
+
+    <div class="odd">
+      <strong>2</strong>
+      <span id="odd2">2.05</span>
+    </div>
+  </div>
+
+  <div class="bookmakers">
+    <div class="book">
+      <b>🟢 Bwin</b>
+      <span id="bwin">3.40 / 3.25 / 2.05</span>
+    </div>
+
+    <div class="book">
+      <b>🔵 Betclic</b>
+      <span id="betclic">3.45 / 3.20 / 2.00</span>
+    </div>
+  </div>
+
+  <div class="status">
+    ⚠️ Démonstration : les valeurs ci-dessus sont des exemples.
+    Les vraies cotes Bwin/Betclic seront affichées lorsqu'une source
+    de données autorisée sera connectée.
+  </div>
 </div>
+
+
+<div class="card">
+  <h2>📈 Évolution de cote</h2>
+
+  <div class="graph">
+    <svg viewBox="0 0 400 150" preserveAspectRatio="none">
+      <polyline
+        points="0,35 60,45 120,42 180,70 240,62 300,82 360,72 400,90"
+        fill="none"
+        stroke="#2563eb"
+        stroke-width="5"
+      />
+    </svg>
+  </div>
+
+  <p style="color:#64748b">
+    Suivi de l'évolution de la cote jusqu'au coup d'envoi.
+  </p>
+</div>
+
+
+<div class="card">
+  <h2>🎯 Analyse</h2>
+
+  <div class="analysis" id="analysis">
+    Marseille présente ici un avantage statistique selon les données
+    de démonstration. L'analyse réelle sera calculée à partir des
+    données disponibles sur les équipes et les joueurs.
+  </div>
+</div>
+
+
+<div class="card">
+  <h2>📊 Probabilités estimées</h2>
+
+  <div class="percent">
+    <div class="percent-top">
+      <span>Victoire 1</span>
+      <span id="p1">28%</span>
+    </div>
+    <div class="bar">
+      <div class="fill" id="bar1" style="width:28%"></div>
+    </div>
+  </div>
+
+  <div class="percent">
+    <div class="percent-top">
+      <span>Match nul</span>
+      <span id="pn">29%</span>
+    </div>
+    <div class="bar">
+      <div class="fill" id="barN" style="width:29%"></div>
+    </div>
+  </div>
+
+  <div class="percent">
+    <div class="percent-top">
+      <span>Victoire 2</span>
+      <span id="p2">43%</span>
+    </div>
+    <div class="bar">
+      <div class="fill" id="bar2" style="width:43%"></div>
+    </div>
+  </div>
+</div>
+
+
+<div class="card">
+  <h2>👥 Forme & absences</h2>
+
+  <div class="analysis">
+    <b>Forme récente :</b><br>
+    Analyse automatique à connecter aux données des matchs.
+    <br><br>
+    <b>Absences :</b><br>
+    Vérification des joueurs indisponibles à connecter.
+    <br><br>
+    <b>Facteurs :</b><br>
+    Domicile, forme, statistiques, confrontations et évolution des cotes.
+  </div>
+</div>
+
 </main>
+
+<footer>
+  Cote & Match — plateforme française d'analyse football
+</footer>
+
+
+<script>
+
+const matches = [
+
+{
+name:"Paris FC - Marseille",
+odds:["3.40","3.25","2.05"],
+bwin:"3.40 / 3.25 / 2.05",
+betclic:"3.45 / 3.20 / 2.00",
+p:[28,29,43],
+analysis:"Marseille présente ici un avantage statistique selon les données de démonstration."
+},
+
+{
+name:"Lyon - Monaco",
+odds:["2.35","3.40","2.75"],
+bwin:"2.35 / 3.40 / 2.75",
+betclic:"2.40 / 3.35 / 2.70",
+p:[41,27,32],
+analysis:"Les données de démonstration indiquent un match plus équilibré."
+},
+
+{
+name:"Lille - Rennes",
+odds:["1.90","3.45","4.20"],
+bwin:"1.90 / 3.45 / 4.20",
+betclic:"1.95 / 3.40 / 4.10",
+p:[51,27,22],
+analysis:"L'équipe à domicile présente ici l'avantage dans cette démonstration."
+}
+
+];
+
+function changeMatch(){
+
+const i=document.getElementById("matchSelect").value;
+const m=matches[i];
+
+document.getElementById("matchName").textContent=m.name;
+
+document.getElementById("odd1").textContent=m.odds[0];
+document.getElementById("oddN").textContent=m.odds[1];
+document.getElementById("odd2").textContent=m.odds[2];
+
+document.getElementById("bwin").textContent=m.bwin;
+document.getElementById("betclic").textContent=m.betclic;
+
+document.getElementById("p1").textContent=m.p[0]+"%";
+document.getElementById("pn").textContent=m.p[1]+"%";
+document.getElementById("p2").textContent=m.p[2]+"%";
+
+document.getElementById("bar1").style.width=m.p[0]+"%";
+document.getElementById("barN").style.width=m.p[1]+"%";
+document.getElementById("bar2").style.width=m.p[2]+"%";
+
+document.getElementById("analysis").textContent=m.analysis;
+
+}
+
+</script>
+
 </body>
 </html>
